@@ -1,0 +1,13 @@
+version: '2'
+services:
+    opengateway-cassandra-migration:
+        container_name: opengateway-cassandra-migration
+        environment:
+            - CASSANDRA_CONTACT_POINT=opengateway-cassandra
+            - USER=docker-cassandra-migration
+            # - DEBUG_LOG=1 # uncomment to show debug logs durinq the migration process
+        build:
+            context: .
+            dockerfile: cassandra/Cassandra-Migration.Dockerfile
+        volumes:
+            - ../resources/config/cql:/cql:ro

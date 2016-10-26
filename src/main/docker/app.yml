@@ -1,0 +1,35 @@
+version: '2'
+services:
+    opengateway-app:
+        image: opengateway
+        external_links:
+            - opengateway-mysql:mysql
+            # Uncomment to have Cassandra working with the gateway
+            # - opengateway-cassandra:cassandra
+            - opengateway-elasticsearch:elasticsearch
+            - jhipster-registry:registry
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_CLOUD_CONFIG_URI=http://admin:admin@registry:8761/config
+            - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/opengateway?useUnicode=true&characterEncoding=utf8&useSSL=false
+            - SPRING_DATA_CASSANDRA_CONTACTPOINTS=cassandra
+            - JHIPSTER_SLEEP=30 # gives time for the cassandra cluster to start and execute the migration scripts
+            - SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES=elasticsearch:9300
+        ports:
+            - 8080:8080
+    opengateway-mysql:
+        extends:
+            file: mysql.yml
+            service: opengateway-mysql
+        # Uncomment to have Cassandra working with the gateway
+        # extends:
+        #     file: cassandra-cluster.yml
+        #     service: opengateway-cassandra
+    opengateway-elasticsearch:
+        extends:
+            file: elasticsearch.yml
+            service: opengateway-elasticsearch
+    jhipster-registry:
+        extends:
+            file: jhipster-registry.yml
+            service: jhipster-registry
